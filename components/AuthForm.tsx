@@ -19,7 +19,7 @@ import { useRouter } from "next/navigation";
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
-  const [user, useUser] = useState(null);
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const formSchema = authFormSchema(type);
@@ -38,16 +38,17 @@ const AuthForm = ({ type }: { type: string }) => {
     setIsLoading(true);
     try {
       //Sign up with Appwrite and create plain token
-      if (type === "sign-in") {
-        const newUser = await signUp(data);
-        setUser = newUser;
-      }
       if (type === "sign-up") {
-        const response = await signIn({
-          email: data.email,
-          password: data.password,
-        });
-        if (response) router.push("/");
+        const newUser = await signUp(data);
+
+        setUser(newUser)
+      }
+      if (type === "sign-in") {
+        // const response = await signIn({
+        //   email: data.email,
+        //   password: data.password,
+        // });
+        // if (response) router.push("/");
       }
     } catch (error) {
       console.log(error);
@@ -67,7 +68,7 @@ const AuthForm = ({ type }: { type: string }) => {
         </Link>
         <div className="flex flex-col gap-1 md:gap-3">
           <h1 className="text-24 lg:text-36 font-semibold text-gray-900">
-            {user ? "LinkAccount" : type === "sign-in" ? "Sign-in" : "Sign-up"}
+            {user ? "Link Account" : type === "sign-in" ? "Sign-in" : "Sign-up"}
             <p className="text-16 font-normal text-gray-600">
               {user
                 ? "Link your account to get started"
@@ -88,14 +89,14 @@ const AuthForm = ({ type }: { type: string }) => {
                     <CustomInput
                       control={form.control}
                       label="Firstname:"
-                      name="firstname"
+                      name="firstName"
                       placeholder="Enter your firstname"
                       type={""}
                     />
                     <CustomInput
                       control={form.control}
                       label="Lastname:"
-                      name="lastname"
+                      name="lastName"
                       placeholder="Enter your lastname"
                       type={""}
                     />
