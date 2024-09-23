@@ -12,7 +12,7 @@ import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 import SignUp from "@/app/(auth)/sign-up/page";
-import { signIn, signUp } from "@/lib/actions/user.actions";
+import { signIn, signUp, getLoggedInUser } from "@/lib/actions/user.actions";
 import { useRouter } from "next/navigation";
 
 // custom form
@@ -23,6 +23,7 @@ const AuthForm = ({ type }: { type: string }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const formSchema = authFormSchema(type);
+  
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,14 +42,14 @@ const AuthForm = ({ type }: { type: string }) => {
       if (type === "sign-up") {
         const newUser = await signUp(data);
 
-        setUser(newUser)
+        setUser(newUser);
       }
       if (type === "sign-in") {
-        // const response = await signIn({
-        //   email: data.email,
-        //   password: data.password,
-        // });
-        // if (response) router.push("/");
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
+        if (response) router.push("/");
       }
     } catch (error) {
       console.log(error);
@@ -91,23 +92,23 @@ const AuthForm = ({ type }: { type: string }) => {
                       label="Firstname:"
                       name="firstName"
                       placeholder="Enter your firstname"
-                      type={""}
+              
                     />
                     <CustomInput
                       control={form.control}
                       label="Lastname:"
                       name="lastName"
                       placeholder="Enter your lastname"
-                      type={""}
+
                     />
                   </div>
 
                   <CustomInput
                     control={form.control}
                     label="Address:"
-                    name="address"
+                    name="address1"
                     placeholder="Enter your address:"
-                    type={""}
+              
                   />
                   <div className="flex gap-4">
                     <CustomInput
@@ -115,14 +116,14 @@ const AuthForm = ({ type }: { type: string }) => {
                       label="City:"
                       name="city"
                       placeholder="Example: Da Nang:"
-                      type={""}
+                     
                     />
                     <CustomInput
                       control={form.control}
                       label="Postal Code:"
                       name="postalCode"
                       placeholder="Example: 555550"
-                      type={""}
+                      
                     />{" "}
                   </div>
                   <div className="flex gap-4">
@@ -131,14 +132,14 @@ const AuthForm = ({ type }: { type: string }) => {
                       label="Day of birth:"
                       name="dob"
                       placeholder="YYYY-MM-DD"
-                      type={""}
+                      
                     />
                     <CustomInput
                       control={form.control}
                       label="SNN:"
                       name="snn"
                       placeholder="Example: 1234"
-                      type={""}
+                     
                     />
                   </div>
                 </>
@@ -148,14 +149,14 @@ const AuthForm = ({ type }: { type: string }) => {
                 label="Email:"
                 name="email"
                 placeholder="Enter your email"
-                type={""}
+                
               />
               <CustomInput
                 control={form.control}
                 label="Password:"
                 name="password"
                 placeholder="Enter your password"
-                type={""}
+                
               />
               <div className="flex flex-col gap-4">
                 <Button className="form-btn" type="submit" disabled={isLoading}>
